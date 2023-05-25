@@ -3,10 +3,9 @@ package com.example.peer360.review.controller;
 import com.example.peer360.review.dto.ReviewDto;
 import com.example.peer360.review.service.ReviewService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-@Controller
+@RestController
 @RequiredArgsConstructor
 @RequestMapping("/reviews")
 public class ReviewController {

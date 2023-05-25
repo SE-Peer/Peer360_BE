@@ -3,10 +3,9 @@ package com.example.peer360.project.controller;
 import com.example.peer360.project.dto.ProjectDto;
 import com.example.peer360.project.service.ProjectService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-@Controller
+@RestController
 @RequiredArgsConstructor
 @RequestMapping("/projects")
 public class ProjectController {
