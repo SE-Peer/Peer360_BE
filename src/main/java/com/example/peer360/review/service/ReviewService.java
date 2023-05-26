@@ -27,8 +27,8 @@ public class ReviewService {
         return savedReview.toDto();
     }
 
-    public ReviewDto getReview(Long id) {
-        return reviewRepository.findById(id).map(Review::toDto).orElseThrow();
+    public ReviewDto getReview(Long reviewId) {
+        return reviewRepository.findById(reviewId).map(Review::toDto).orElseThrow();
     }
 
 }

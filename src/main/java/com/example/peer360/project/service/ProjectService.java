@@ -22,7 +22,7 @@ public class ProjectService {
         return savedProject.toDto();
     }
 
-    public ProjectDto getProject(Long id) {
-        return projectRepository.findById(id).map(Project::toDto).orElseThrow();
+    public ProjectDto getProject(Long projectId) {
+        return projectRepository.findById(projectId).map(Project::toDto).orElseThrow();
     }
 }

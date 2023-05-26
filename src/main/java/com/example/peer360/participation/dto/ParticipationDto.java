@@ -12,11 +12,13 @@ import lombok.*;
 @Builder
 public class ParticipationDto {
 
+    private Long participationId;
     private Long userId;
     private Long projectId;
 
     public Participation toEntity(User user, Project project) {
         return Participation.builder()
+                .id(participationId)
                 .user(user)
                 .project(project)
                 .build();

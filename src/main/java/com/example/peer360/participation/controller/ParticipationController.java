@@ -17,9 +17,9 @@ public class ParticipationController {
         return participationService.createParticipation(participationDto);
     }
 
-    @GetMapping("/{id}")
-    public ParticipationDto getParticipation(@PathVariable Long id) {
-        return participationService.getParticipation(id);
+    @GetMapping("/{participationId}")
+    public ParticipationDto getParticipation(@PathVariable Long participationId) {
+        return participationService.getParticipation(participationId);
     }
 
 

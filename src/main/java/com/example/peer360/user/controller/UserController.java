@@ -17,9 +17,9 @@ public class UserController {
         return userService.createUser(userDto);
     }
 
-    @GetMapping("/{id}")
-    public UserDto getUser(@PathVariable Long id) {
-        return userService.getUser(id);
+    @GetMapping("/{userId}")
+    public UserDto getUser(@PathVariable Long userId) {
+        return userService.getUser(userId);
     }
 
 }

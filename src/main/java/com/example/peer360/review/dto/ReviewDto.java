@@ -11,12 +11,15 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class ReviewDto {
+
+    private Long reviewId; // ID in DB
     private String content;
     private Long projectId;
     private Long reviewerId;
 
     public Review toEntity(Project project, User reviewer){
         return Review.builder()
+                .id(reviewId)
                 .content(content)
                 .project(project)
                 .reviewer(reviewer)

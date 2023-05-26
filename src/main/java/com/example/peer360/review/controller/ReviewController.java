@@ -17,8 +17,8 @@ public class ReviewController {
         return reviewService.createReview(reviewDto);
     }
 
-    @GetMapping("/{id}")
-    public ReviewDto getReview(@PathVariable Long id) {
-        return reviewService.getReview(id);
+    @GetMapping("/{reviewId}")
+    public ReviewDto getReview(@PathVariable Long reviewId) {
+        return reviewService.getReview(reviewId);
     }
 }

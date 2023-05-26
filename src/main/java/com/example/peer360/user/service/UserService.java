@@ -21,7 +21,7 @@ public class UserService {
         User savedUser = userRepository.save(user);
         return savedUser.toDto();
     }
-    public UserDto getUser(Long id) {
-        return userRepository.findById(id).map(User::toDto).orElseThrow();
+    public UserDto getUser(Long userId) {
+        return userRepository.findById(userId).map(User::toDto).orElseThrow();
     }
 }

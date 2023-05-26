@@ -17,9 +17,9 @@ public class ProjectController {
         return projectService.createProject(projectDto);
     }
 
-    @GetMapping("/{id}")
-    public ProjectDto getProject(@PathVariable Long id) {
-        return projectService.getProject(id);
+    @GetMapping("/{projectId}")
+    public ProjectDto getProject(@PathVariable Long projectId) {
+        return projectService.getProject(projectId);
     }
 
 }

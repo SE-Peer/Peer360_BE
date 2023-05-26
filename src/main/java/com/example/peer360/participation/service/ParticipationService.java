@@ -28,7 +28,7 @@ public class ParticipationService {
         return savedParticipation.toDto();
     }
 
-    public ParticipationDto getParticipation(Long id) {
-        return participationRepository.findById(id).map(Participation::toDto).orElseThrow();
+    public ParticipationDto getParticipation(Long participationId) {
+        return participationRepository.findById(participationId).map(Participation::toDto).orElseThrow();
     }
 }
