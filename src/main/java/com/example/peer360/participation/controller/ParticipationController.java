@@ -22,5 +22,10 @@ public class ParticipationController {
         return participationService.getParticipation(participationId);
     }
 
+    @DeleteMapping("/{participationId}")
+    public void deleteParticipation(@PathVariable Long participationId) {
+        participationService.deleteParticipation(participationId);
+    }
+
 
 }

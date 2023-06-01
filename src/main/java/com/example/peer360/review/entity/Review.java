@@ -6,6 +6,10 @@ import com.example.peer360.user.entity.User;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Entity
 @Getter
@@ -20,8 +24,11 @@ public class Review {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String content;
+    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL)
+    private List<KeywordItem> keywordItems; // 키워드 평가 항목
+
+    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL)
+    private List<ScoreItem> scoreItems; // 수치 평가 항목 (별점)
 
     @ManyToOne
     @JoinColumn(name = "project_id", nullable = false)
@@ -31,9 +38,25 @@ public class Review {
     @JoinColumn(name = "reviewer_id", nullable = false)
     private User reviewer;
 
+    @ManyToOne
+    @JoinColumn(name = "reviewee_id", nullable = false)
+    private User reviewee;
+
     public ReviewDto toDto() {
+        Map<String, Integer> reviewItemsMap = new HashMap<>();
+        for (ScoreItem item : scoreItems) {
+            reviewItemsMap.put(item.getItemName(), item.getScore());
+        }
+
+        List<String> keywordItemsList = new ArrayList<>();
+        for (KeywordItem item : keywordItems) {
+            keywordItemsList.add(item.getKeywordName());
+        }
+
         return ReviewDto.builder()
-                .content(content)
+                .reviewId(id)
+                .reviewItems(reviewItemsMap)
+                .keywordItems(keywordItemsList)
                 .projectId(project.getId())
                 .reviewerId(reviewer.getId())
                 .build();
