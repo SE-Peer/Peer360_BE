@@ -19,24 +19,17 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class ReviewService {
 
     private final ReviewRepository reviewRepository;
     private final UserRepository userRepository;
     private final ProjectRepository projectRepository;
+
+    @Transactional
     public ReviewDto createReview(ReviewDto reviewDto) {
         User reviewer = userRepository.findById(reviewDto.getReviewerId()).orElseThrow();
         User reviewee = userRepository.findById(reviewDto.getRevieweeId()).orElseThrow();
         Project project = projectRepository.findById(reviewDto.getProjectId()).orElseThrow();
-
-        List<ScoreItem> reviewItems = new ArrayList<>();
-        for (Map.Entry<String, Integer> entry : reviewDto.getReviewItems().entrySet()) {
-            ScoreItem reviewItem = new ScoreItem();
-            reviewItem.setItemName(entry.getKey());
-            reviewItem.setScore(entry.getValue());
-            reviewItems.add(reviewItem);
-        }
 
         List<KeywordItem> keywordItems = new ArrayList<>();
         for (String keyword : reviewDto.getKeywordItems()) {
@@ -44,8 +37,29 @@ public class ReviewService {
             keywordItem.setKeywordName(keyword);
             keywordItems.add(keywordItem);
         }
+        List<ScoreItem> scoreItems = new ArrayList<>();
+        for (Map.Entry<String, Integer> entry : reviewDto.getReviewItems().entrySet()) {
+            ScoreItem scoreItem = new ScoreItem();
+            scoreItem.setItemName(entry.getKey());
+            scoreItem.setScore(entry.getValue());
+            scoreItems.add(scoreItem);
+        }
 
-        Review review = reviewDto.toEntity(project, reviewer, reviewee, reviewItems, keywordItems);
+        Review review = Review.builder()
+                .reviewer(reviewer)
+                .reviewee(reviewee)
+                .project(project)
+                .keywordItems(keywordItems)
+                .scoreItems(scoreItems)
+                .build();
+
+        for (KeywordItem keywordItem : keywordItems) {
+            keywordItem.setReview(review);
+        }
+        for (ScoreItem scoreItem : scoreItems) {
+            scoreItem.setReview(review);
+        }
+
         Review savedReview = reviewRepository.save(review);
         return savedReview.toDto();
     }

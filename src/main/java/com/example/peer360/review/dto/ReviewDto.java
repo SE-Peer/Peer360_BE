@@ -24,14 +24,4 @@ public class ReviewDto {
     private Long reviewerId;
     private Long revieweeId;
 
-    public Review toEntity(Project project, User reviewer, User reviewee, List<ScoreItem> scoreItems, List<KeywordItem> keywordItems){
-        return Review.builder()
-                .id(reviewId)
-                .scoreItems(scoreItems)
-                .keywordItems(keywordItems)
-                .project(project)
-                .reviewer(reviewer)
-                .reviewee(reviewee)
-                .build();
-    }
 }

@@ -59,6 +59,7 @@ public class Review {
                 .keywordItems(keywordItemsList)
                 .projectId(project.getId())
                 .reviewerId(reviewer.getId())
+                .revieweeId(reviewee.getId())
                 .build();
     }
 }

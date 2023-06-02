@@ -1,14 +1,11 @@
 package com.example.peer360.user.service;
 
-
 import com.example.peer360.user.dto.UserDto;
 import com.example.peer360.user.entity.User;
 import com.example.peer360.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
