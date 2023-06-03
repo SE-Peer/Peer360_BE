@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "d3": "^7.8.5",
+    "d3-cloud": "^1.2.5",
+    "d3.layout.cloud": "^1.2.0"
+  }
+}
