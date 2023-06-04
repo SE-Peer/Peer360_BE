@@ -1,6 +1,7 @@
 package com.example.peer360.user.controller;
 
 import com.example.peer360.review.dto.ReviewDto;
+import com.example.peer360.review.service.ReviewService;
 import com.example.peer360.user.dto.UserDto;
 import com.example.peer360.user.service.UserService;
 import com.kennycason.kumo.CollisionMode;
@@ -17,6 +18,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import javax.servlet.http.HttpSession;
 import java.awt.*;
@@ -35,6 +38,8 @@ import java.util.stream.Collectors;
 public class UserController {
 
     private final UserService userService;
+    private final ReviewService reviewService;
+    private final S3Client s3Client;
 
     @PostMapping
     public UserDto createUser(@RequestBody UserDto userDto){
@@ -64,9 +69,15 @@ public class UserController {
         return "redirect:/";
     }
 
+    @GetMapping("/{userId}/average-scores")
+    @ResponseBody
+    public Map<String, Double> getAverageScoresByItemName(@PathVariable Long userId) {
+        return reviewService.getAverageScoresByItemName(userId);
+    }
+
 
     @GetMapping("/{userId}/reviews/wordcloud")
-    public ResponseEntity<byte[]> getUserReviewsWordCloud(@PathVariable Long userId) throws IOException {
+    public ResponseEntity<String> getUserReviewsWordCloud(@PathVariable Long userId) throws IOException {
         List<ReviewDto> reviews = userService.getUserReviews(userId);
 
         Map<String, Integer> wordFrequencies = reviews.stream()
@@ -76,11 +87,21 @@ public class UserController {
         String filename = "wordcloud.png";
         generateWordCloud(wordFrequencies, filename);
 
-        byte[] imageBytes = Files.readAllBytes(Paths.get(filename));
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.IMAGE_PNG);
+        String bucketName = "unia-github-actions-s3-bucket"; // TODO: replace with your S3 bucket name
+        String s3Filename = "wordclouds/" + userId + "/" + filename; // path in S3 bucket
 
-        return new ResponseEntity<>(imageBytes, headers, HttpStatus.OK);
+        // Upload file to S3
+        PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+                .bucket(bucketName)
+                .key(s3Filename)
+                .build();
+
+        s3Client.putObject(putObjectRequest, Paths.get(filename));
+
+        // Get the file URL
+        String fileUrl = s3Client.utilities().getUrl(builder -> builder.bucket(bucketName).key(s3Filename)).toExternalForm();
+
+        return new ResponseEntity<>(fileUrl, HttpStatus.OK);
     }
 
     private void generateWordCloud(Map<String, Integer> wordFrequencies, String filename) {

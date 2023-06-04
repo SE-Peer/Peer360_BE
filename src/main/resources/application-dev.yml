@@ -16,3 +16,11 @@ spring:
       matching-strategy: ant_path_matcher
 server:
   port: 8081
+
+cloud:
+  aws:
+    region:
+      static: ap-northeast-2
+    credentials:
+      accessKey: ${ACCESS_KEY}
+      secretKey: ${SECRET_KEY}

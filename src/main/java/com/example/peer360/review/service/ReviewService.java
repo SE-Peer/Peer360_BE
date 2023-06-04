@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -66,6 +67,26 @@ public class ReviewService {
 
     public ReviewDto getReview(Long reviewId) {
         return reviewRepository.findById(reviewId).map(Review::toDto).orElseThrow();
+    }
+
+
+    public Map<String, Double> getAverageScoresByItemName(Long userId) {
+        List<Review> reviews = reviewRepository.findByRevieweeId(userId);
+
+        Map<String, List<Integer>> scoresByItemName = new HashMap<>();
+        for (Review review : reviews) {
+            for (ScoreItem scoreItem : review.getScoreItems()) {
+                scoresByItemName.computeIfAbsent(scoreItem.getItemName(), k -> new ArrayList<>()).add(scoreItem.getScore());
+            }
+        }
+
+        Map<String, Double> averageScoresByItemName = new HashMap<>();
+        for (Map.Entry<String, List<Integer>> entry : scoresByItemName.entrySet()) {
+            double average = entry.getValue().stream().mapToInt(Integer::intValue).average().orElse(0.0);
+            averageScoresByItemName.put(entry.getKey(), average);
+        }
+
+        return averageScoresByItemName;
     }
 
 }
