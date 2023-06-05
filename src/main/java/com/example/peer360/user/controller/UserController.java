@@ -11,12 +11,9 @@ import com.kennycason.kumo.bg.CircleBackground;
 import com.kennycason.kumo.font.scale.SqrtFontScalar;
 import com.kennycason.kumo.palette.LinearGradientColorPalette;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
@@ -24,9 +21,7 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import javax.servlet.http.HttpSession;
 import java.awt.*;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -42,39 +37,39 @@ public class UserController {
     private final S3Client s3Client;
 
     @PostMapping
-    public UserDto createUser(@RequestBody UserDto userDto){
-        return userService.createUser(userDto);
+    public ResponseEntity<UserDto> createUser(@RequestBody UserDto userDto){
+        UserDto createdUser = userService.createUser(userDto);
+        return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
     }
 
     @GetMapping("/{userId}")
-    public UserDto getUser(@PathVariable Long userId) {
-        return userService.getUser(userId);
+    public ResponseEntity<UserDto> getUser(@PathVariable Long userId) {
+        UserDto user = userService.getUser(userId);
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-
     @PostMapping("/login")
-    public String login(@RequestBody UserDto userDto, HttpSession session) {
-        UserDto user = userService.validateUser(userDto.getEmail(), userDto.getPassword());
+    public ResponseEntity<String> login(@RequestBody Map<String, String> credentials, HttpSession session) {
+        UserDto user = userService.validateUser(credentials.get("email"), credentials.get("password"));
         if (user != null) {
             session.setAttribute("user", user);
-            return "redirect:/";
+            return new ResponseEntity<>("login success", HttpStatus.OK);
         } else {
-            return "login";
+            return new ResponseEntity<>("login fail", HttpStatus.UNAUTHORIZED);
         }
     }
 
     @GetMapping("/logout")
-    public String logout(HttpSession session) {
+    public ResponseEntity<String> logout(HttpSession session) {
         session.removeAttribute("user");
-        return "redirect:/";
+        return new ResponseEntity<>("redirect:/", HttpStatus.OK);
     }
 
     @GetMapping("/{userId}/average-scores")
-    @ResponseBody
-    public Map<String, Double> getAverageScoresByItemName(@PathVariable Long userId) {
-        return reviewService.getAverageScoresByItemName(userId);
+    public ResponseEntity<Map<String, Double>> getAverageScoresByItemName(@PathVariable Long userId) {
+        Map<String, Double> averageScores = reviewService.getAverageScoresByItemName(userId);
+        return new ResponseEntity<>(averageScores, HttpStatus.OK);
     }
-
 
     @GetMapping("/{userId}/reviews/wordcloud")
     public ResponseEntity<String> getUserReviewsWordCloud(@PathVariable Long userId) throws IOException {
@@ -87,10 +82,9 @@ public class UserController {
         String filename = "wordcloud.png";
         generateWordCloud(wordFrequencies, filename);
 
-        String bucketName = "unia-github-actions-s3-bucket"; // TODO: replace with your S3 bucket name
-        String s3Filename = "wordclouds/" + userId + "/" + filename; // path in S3 bucket
+        String bucketName = "unia-github-actions-s3-bucket";
+        String s3Filename = "wordclouds/" + userId + "/" + filename;
 
-        // Upload file to S3
         PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                 .bucket(bucketName)
                 .key(s3Filename)
@@ -98,7 +92,6 @@ public class UserController {
 
         s3Client.putObject(putObjectRequest, Paths.get(filename));
 
-        // Get the file URL
         String fileUrl = s3Client.utilities().getUrl(builder -> builder.bucket(bucketName).key(s3Filename)).toExternalForm();
 
         return new ResponseEntity<>(fileUrl, HttpStatus.OK);
