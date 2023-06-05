@@ -17,20 +17,22 @@ import javax.persistence.*;
 public class Participation {
 
     @Id
+    @Column(nullable = false, unique = true)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_email", nullable = false)
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "project_id", nullable = false)
+    @JoinColumn(name = "project_name", nullable = false)
     private Project project;
 
     public ParticipationDto toDto() {
         return ParticipationDto.builder()
-                .userId(user.getId())
-                .projectId(project.getId())
+                .participationId(id)
+                .userEmail(user.getEmail())
+                .projectName(project.getName())
                 .build();
     }
 }

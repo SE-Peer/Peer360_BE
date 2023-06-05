@@ -8,7 +8,7 @@ import com.example.peer360.user.entity.User;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.Set;
+import java.util.List;
 
 @Entity
 @Getter
@@ -30,14 +30,14 @@ public class Project {
     private ReviewStatus status; //ReviewStatus is an enum with values REVIEW_POSSIBLE, REVIEW_COMPLETED
 
     @ManyToOne
-    @JoinColumn(name = "creator_id", nullable = false)
+    @JoinColumn(name = "creator_email", referencedColumnName = "email", nullable = false)
     private User creator;
 
     @OneToMany(mappedBy = "project")
-    private Set<Review> reviews;
+    private List<Review> reviews;
 
     @OneToMany(mappedBy = "project")
-    private Set<Participation> participations;
+    private List<Participation> participations;
 
     public ProjectDto toDto() {
         return ProjectDto.builder()

@@ -24,6 +24,6 @@ public class ScoreItem {
     private Integer score;
 
     @ManyToOne
-    @JoinColumn(name = "review_id", nullable = false)
+    @JoinColumn(name = "review_id", referencedColumnName = "id", nullable = false)
     private Review review;
 }

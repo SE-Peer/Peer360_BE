@@ -21,6 +21,7 @@ import java.util.Map;
 public class Review {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @OneToMany(mappedBy = "review", cascade = CascadeType.ALL)
@@ -30,15 +31,15 @@ public class Review {
     private List<ScoreItem> scoreItems; // 수치 평가 항목 (별점)
 
     @ManyToOne
-    @JoinColumn(name = "project_id", nullable = false)
+    @JoinColumn(name = "project_name", nullable = false)
     private Project project;
 
     @ManyToOne
-    @JoinColumn(name = "reviewer_id", nullable = false)
+    @JoinColumn(name = "reviewer_email", nullable = false)
     private User reviewer;
 
     @ManyToOne
-    @JoinColumn(name = "reviewee_id", nullable = false)
+    @JoinColumn(name = "reviewee_email", nullable = false)
     private User reviewee;
 
     public ReviewDto toDto() {
@@ -56,9 +57,9 @@ public class Review {
                 .reviewId(id)
                 .reviewItems(reviewItemsMap)
                 .keywordItems(keywordItemsList)
-                .projectId(project.getId())
-                .reviewerId(reviewer.getEmail())
-                .revieweeId(reviewee.getEmail())
+                .projectName(project.getName())
+                .reviewerEmail(reviewer.getEmail())
+                .revieweeEmail(reviewee.getEmail())
                 .build();
     }
 }

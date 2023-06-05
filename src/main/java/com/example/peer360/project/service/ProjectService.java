@@ -23,6 +23,6 @@ public class ProjectService {
     }
 
     public ProjectDto getProject(String projectName) {
-        return projectRepository.findById(projectName).map(Project::toDto).orElseThrow();
+        return projectRepository.findByName(projectName).map(Project::toDto).orElseThrow();
     }
 }

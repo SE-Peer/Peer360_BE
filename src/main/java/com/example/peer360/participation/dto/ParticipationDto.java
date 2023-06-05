@@ -13,8 +13,9 @@ import lombok.*;
 public class ParticipationDto {
 
     private Long participationId;
-    private Long userId;
-    private Long projectId;
+    private String userEmail;
+    private String projectName;
+
 
     public Participation toEntity(User user, Project project) {
         return Participation.builder()

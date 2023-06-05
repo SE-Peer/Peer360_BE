@@ -30,9 +30,9 @@ public class ReviewService {
 
     @Transactional
     public ReviewDto createReview(ReviewDto reviewDto) {
-        User reviewer = userRepository.findById(reviewDto.getReviewerId()).orElseThrow();
-        User reviewee = userRepository.findById(reviewDto.getRevieweeId()).orElseThrow();
-        Project project = projectRepository.findById(reviewDto.getProjectId()).orElseThrow();
+        User reviewer = userRepository.findByEmail(reviewDto.getReviewerEmail());
+        User reviewee = userRepository.findByEmail(reviewDto.getRevieweeEmail());
+        Project project = projectRepository.findByName(reviewDto.getProjectName()).orElseThrow();
 
         List<KeywordItem> keywordItems = new ArrayList<>();
         for (String keyword : reviewDto.getKeywordItems()) {
@@ -74,7 +74,7 @@ public class ReviewService {
 
     public Map<String, Double> getAverageScoresByItemName(String email) {
         User user = userService.findUserByEmail(email);
-        List<Review> reviews = reviewRepository.findByRevieweeId(user.getId());
+        List<Review> reviews = reviewRepository.findByRevieweeEmail(user.getEmail());
 
         Map<String, List<Integer>> scoresByItemName = new HashMap<>();
         for (Review review : reviews) {

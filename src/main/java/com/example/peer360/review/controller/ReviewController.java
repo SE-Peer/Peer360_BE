@@ -16,7 +16,9 @@ public class ReviewController {
     private final ReviewService reviewService;
 
     @ApiOperation(
-            value = "리뷰 작성")
+            value = "리뷰 작성"
+    , notes = "[ReviewDto] reviewId : 임의 숫자 (ex. 1, 2, 3 ..), keywordItems : 친절, 적극적, 열정있음, 답장안함 등," +
+            "reviewItems: https://docs.google.com/document/d/1Yy9PjSuH3KyWTDSNbevhs6tSqer74tE73LG1Pe3rRl8/edit?usp=sharing")
     @PostMapping
     public ResponseEntity<ReviewDto> createReview(@RequestBody ReviewDto reviewDto) {
         ReviewDto createdReview = reviewService.createReview(reviewDto);

@@ -21,6 +21,6 @@ public class KeywordItem {
     private String keywordName;
 
     @ManyToOne
-    @JoinColumn(name = "review_id", nullable = false)
+    @JoinColumn(name = "review_id", referencedColumnName = "id", nullable = false)
     private Review review;
 }

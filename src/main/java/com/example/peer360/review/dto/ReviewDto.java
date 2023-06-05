@@ -1,10 +1,5 @@
 package com.example.peer360.review.dto;
 
-import com.example.peer360.project.entity.Project;
-import com.example.peer360.review.entity.KeywordItem;
-import com.example.peer360.review.entity.Review;
-import com.example.peer360.review.entity.ScoreItem;
-import com.example.peer360.user.entity.User;
 import lombok.*;
 
 import java.util.List;
@@ -20,8 +15,7 @@ public class ReviewDto {
     private Long reviewId; // ID in DB
     private List<String> keywordItems; // 키워드 리스트
     private Map<String, Integer> reviewItems; // 평가 항목과 점수
-    private Long projectId;
-    private Long reviewerId;
-    private Long revieweeId;
-
+    private String projectName;
+    private String reviewerEmail;
+    private String revieweeEmail;
 }

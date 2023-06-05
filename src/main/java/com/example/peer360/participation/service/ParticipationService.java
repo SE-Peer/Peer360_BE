@@ -24,8 +24,8 @@ public class ParticipationService {
     private final ProjectRepository projectRepository;
 
     public ParticipationDto createParticipation(ParticipationDto participationDto) {
-        User user = userRepository.findById(participationDto.getUserId()).orElseThrow();
-        Project project = projectRepository.findById(participationDto.getProjectId()).orElseThrow();
+        User user = userRepository.findById(participationDto.getUserEmail()).orElseThrow();
+        Project project = projectRepository.findByName(participationDto.getProjectName()).orElseThrow();
 
         List<Participation> allByUserAndProject = participationRepository.findAllByUserAndProject(user, project);
         if (!allByUserAndProject.isEmpty()) {

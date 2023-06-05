@@ -63,7 +63,7 @@ public class UserController {
     @GetMapping("/logout")
     public ResponseEntity<String> logout(HttpSession session) {
         session.removeAttribute("user");
-        return new ResponseEntity<>("redirect:/", HttpStatus.OK);
+        return new ResponseEntity<>("logout success", HttpStatus.OK);
     }
 
     @GetMapping("/{email}/average-scores")
