@@ -12,20 +12,17 @@ import lombok.*;
 @Builder
 public class ProjectDto {
 
-    private Long projectId;
     private String name;
     private String url;
     private String status;
-    private Long creatorId;
+    private String creatorEmail;
 
     public Project toEntity(User creator){
         return Project.builder()
-                .id(projectId)
                 .name(name)
                 .url(url)
                 .status(ReviewStatus.valueOf(status))
                 .creator(creator)
                 .build();
     }
-
 }

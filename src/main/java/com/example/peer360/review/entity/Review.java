@@ -21,7 +21,6 @@ import java.util.Map;
 public class Review {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @OneToMany(mappedBy = "review", cascade = CascadeType.ALL)
@@ -58,8 +57,8 @@ public class Review {
                 .reviewItems(reviewItemsMap)
                 .keywordItems(keywordItemsList)
                 .projectId(project.getId())
-                .reviewerId(reviewer.getId())
-                .revieweeId(reviewee.getId())
+                .reviewerId(reviewer.getEmail())
+                .revieweeId(reviewee.getEmail())
                 .build();
     }
 }

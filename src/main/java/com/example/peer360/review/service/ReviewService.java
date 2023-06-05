@@ -9,6 +9,7 @@ import com.example.peer360.review.entity.Review;
 import com.example.peer360.review.repository.ReviewRepository;
 import com.example.peer360.user.entity.User;
 import com.example.peer360.user.repository.UserRepository;
+import com.example.peer360.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +26,7 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final UserRepository userRepository;
     private final ProjectRepository projectRepository;
+    private final UserService userService;
 
     @Transactional
     public ReviewDto createReview(ReviewDto reviewDto) {
@@ -70,8 +72,9 @@ public class ReviewService {
     }
 
 
-    public Map<String, Double> getAverageScoresByItemName(Long userId) {
-        List<Review> reviews = reviewRepository.findByRevieweeId(userId);
+    public Map<String, Double> getAverageScoresByItemName(String email) {
+        User user = userService.findUserByEmail(email);
+        List<Review> reviews = reviewRepository.findByRevieweeId(user.getId());
 
         Map<String, List<Integer>> scoresByItemName = new HashMap<>();
         for (Review review : reviews) {
@@ -88,5 +91,4 @@ public class ReviewService {
 
         return averageScoresByItemName;
     }
-
 }

@@ -20,10 +20,7 @@ import java.util.Set;
 public class Project {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String name;
 
     @Column(nullable = false)
@@ -47,7 +44,7 @@ public class Project {
                 .name(name)
                 .url(url)
                 .status(status.toString())
-                .creatorId(creator.getId())
+                .creatorEmail(creator.getEmail())
                 .build();
     }
 }

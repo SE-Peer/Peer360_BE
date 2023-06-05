@@ -20,9 +20,9 @@ public class ProjectController {
         return new ResponseEntity<>(createdProject, HttpStatus.CREATED);
     }
 
-    @GetMapping("/{projectId}")
-    public ResponseEntity<ProjectDto> getProject(@PathVariable Long projectId) {
-        ProjectDto project = projectService.getProject(projectId);
+    @GetMapping("/{projectName}")
+    public ResponseEntity<ProjectDto> getProject(@PathVariable String projectName) {
+        ProjectDto project = projectService.getProject(projectName);
         return new ResponseEntity<>(project, HttpStatus.OK);
     }
 }

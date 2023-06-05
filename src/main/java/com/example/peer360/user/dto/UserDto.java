@@ -10,7 +10,6 @@ import lombok.*;
 @Builder
 public class UserDto {
 
-    private Long userId; // ID in DB
     private String name;
     private String email;
     private String password;
@@ -20,7 +19,6 @@ public class UserDto {
 
     public User toEntity() {
         return User.builder()
-                .id(userId)
                 .name(name)
                 .email(email)
                 .password(password)

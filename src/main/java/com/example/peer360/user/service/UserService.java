@@ -25,12 +25,13 @@ public class UserService {
         User savedUser = userRepository.save(user);
         return savedUser.toDto();
     }
-    public UserDto getUser(Long userId) {
-        return userRepository.findById(userId).map(User::toDto).orElseThrow();
+    public UserDto getUser(String email) {
+        User user = userRepository.findByEmail(email);
+        return user.toDto();
     }
 
-    public List<ReviewDto> getUserReviews(Long userId) {
-        User user = userRepository.findById(userId).orElseThrow();
+    public List<ReviewDto> getUserReviews(String email) {
+        User user = userRepository.findByEmail(email);
         List<Review> reviews = reviewRepository.findByReviewee(user);
         return reviews.stream().map(Review::toDto).collect(Collectors.toList());
     }
@@ -41,6 +42,10 @@ public class UserService {
             return user.toDto();
         }
         return null;
+    }
+
+    public User findUserByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 
 }

@@ -16,13 +16,13 @@ public class ProjectService {
     private final UserRepository userRepository;
 
     public ProjectDto createProject(ProjectDto projectDto) {
-        User creator = userRepository.findById(projectDto.getCreatorId()).orElseThrow();
+        User creator = userRepository.findById(projectDto.getCreatorEmail()).orElseThrow();
         Project project = projectDto.toEntity(creator);
         Project savedProject = projectRepository.save(project);
         return savedProject.toDto();
     }
 
-    public ProjectDto getProject(Long projectId) {
-        return projectRepository.findById(projectId).map(Project::toDto).orElseThrow();
+    public ProjectDto getProject(String projectName) {
+        return projectRepository.findById(projectName).map(Project::toDto).orElseThrow();
     }
 }

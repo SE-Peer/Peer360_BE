@@ -2,6 +2,7 @@ package com.example.peer360.user.controller;
 
 import com.example.peer360.review.dto.ReviewDto;
 import com.example.peer360.review.service.ReviewService;
+import com.example.peer360.user.dto.LoginRequestDto;
 import com.example.peer360.user.dto.UserDto;
 import com.example.peer360.user.service.UserService;
 import com.kennycason.kumo.CollisionMode;
@@ -20,7 +21,6 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import javax.servlet.http.HttpSession;
 import java.awt.*;
-import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
@@ -42,20 +42,21 @@ public class UserController {
         return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
     }
 
-    @GetMapping("/{userId}")
-    public ResponseEntity<UserDto> getUser(@PathVariable Long userId) {
-        UserDto user = userService.getUser(userId);
+
+    @GetMapping("/{email}")
+    public ResponseEntity<UserDto> getUser(@PathVariable String email) {
+        UserDto user = userService.getUser(email);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody Map<String, String> credentials, HttpSession session) {
-        UserDto user = userService.validateUser(credentials.get("email"), credentials.get("password"));
+    public ResponseEntity<String> login(@RequestBody LoginRequestDto loginRequestDto, HttpSession session) {
+        UserDto user = userService.validateUser(loginRequestDto.getEmail(), loginRequestDto.getPassword());
         if (user != null) {
             session.setAttribute("user", user);
             return new ResponseEntity<>("login success", HttpStatus.OK);
         } else {
-            return new ResponseEntity<>("login fail", HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>("login fail", HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -65,15 +66,16 @@ public class UserController {
         return new ResponseEntity<>("redirect:/", HttpStatus.OK);
     }
 
-    @GetMapping("/{userId}/average-scores")
-    public ResponseEntity<Map<String, Double>> getAverageScoresByItemName(@PathVariable Long userId) {
-        Map<String, Double> averageScores = reviewService.getAverageScoresByItemName(userId);
+    @GetMapping("/{email}/average-scores")
+    public ResponseEntity<Map<String, Double>> getAverageScoresByItemName(@PathVariable String email) {
+        Map<String, Double> averageScores = reviewService.getAverageScoresByItemName(email);
         return new ResponseEntity<>(averageScores, HttpStatus.OK);
     }
 
-    @GetMapping("/{userId}/reviews/wordcloud")
-    public ResponseEntity<String> getUserReviewsWordCloud(@PathVariable Long userId) throws IOException {
-        List<ReviewDto> reviews = userService.getUserReviews(userId);
+
+    @GetMapping("/{email}/reviews/wordcloud")
+    public ResponseEntity<String> getUserReviewsWordCloud(@PathVariable String email) {
+        List<ReviewDto> reviews = userService.getUserReviews(email);
 
         Map<String, Integer> wordFrequencies = reviews.stream()
                 .flatMap(review -> review.getKeywordItems().stream())
@@ -83,7 +85,7 @@ public class UserController {
         generateWordCloud(wordFrequencies, filename);
 
         String bucketName = "unia-github-actions-s3-bucket";
-        String s3Filename = "wordclouds/" + userId + "/" + filename;
+        String s3Filename = "wordclouds/" + email + "/" + filename;
 
         PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                 .bucket(bucketName)
