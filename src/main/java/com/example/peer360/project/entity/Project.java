@@ -9,6 +9,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -45,6 +46,9 @@ public class Project {
                 .url(url)
                 .status(status.toString())
                 .creatorEmail(creator.getEmail())
+                .participants(participations.stream()
+                        .map(participation -> participation.getUser().toDto())
+                        .collect(Collectors.toList()))
                 .build();
     }
 }

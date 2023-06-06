@@ -2,8 +2,11 @@ package com.example.peer360.project.dto;
 
 import com.example.peer360.project.entity.Project;
 import com.example.peer360.review.entity.ReviewStatus;
+import com.example.peer360.user.dto.UserDto;
 import com.example.peer360.user.entity.User;
 import lombok.*;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -16,6 +19,7 @@ public class ProjectDto {
     private String url;
     private String status;
     private String creatorEmail;
+    private List<UserDto> participants;
 
     public Project toEntity(User creator){
         return Project.builder()
