@@ -4,6 +4,7 @@ import com.example.peer360.handler.UserAlreadyParticipatingException;
 import com.example.peer360.participation.dto.ParticipationDto;
 import com.example.peer360.participation.entity.Participation;
 import com.example.peer360.participation.repository.ParticipationRepository;
+import com.example.peer360.project.dto.ProjectDto;
 import com.example.peer360.project.entity.Project;
 import com.example.peer360.project.repository.ProjectRepository;
 import com.example.peer360.user.entity.User;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -43,5 +45,11 @@ public class ParticipationService {
 
     public void deleteParticipation(Long participationId) {
         participationRepository.deleteById(participationId);
+    }
+
+    public List<ParticipationDto> getAllParticipations() {
+        return participationRepository.findAll().stream()
+                .map(Participation::toDto)
+                .collect(Collectors.toList());
     }
 }

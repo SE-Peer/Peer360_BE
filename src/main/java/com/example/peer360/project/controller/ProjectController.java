@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/projects")
@@ -29,4 +31,12 @@ public class ProjectController {
         ProjectDto project = projectService.getProject(projectName);
         return new ResponseEntity<>(project, HttpStatus.OK);
     }
+
+    @ApiOperation(value = "전체 프로젝트 조회", notes = "저장된 모든 프로젝트 정보를 조회")
+    @GetMapping("/list")
+    public ResponseEntity<List<ProjectDto>> getAllProjects() {
+        List<ProjectDto> projects = projectService.getAllProjects();
+        return new ResponseEntity<>(projects, HttpStatus.OK);
+    }
+
 }

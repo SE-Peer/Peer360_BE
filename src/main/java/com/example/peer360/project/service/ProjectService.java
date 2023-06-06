@@ -8,6 +8,9 @@ import com.example.peer360.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class ProjectService {
@@ -24,5 +27,11 @@ public class ProjectService {
 
     public ProjectDto getProject(String projectName) {
         return projectRepository.findByName(projectName).map(Project::toDto).orElseThrow();
+    }
+
+    public List<ProjectDto> getAllProjects() {
+        return projectRepository.findAll().stream()
+                .map(Project::toDto)
+                .collect(Collectors.toList());
     }
 }
