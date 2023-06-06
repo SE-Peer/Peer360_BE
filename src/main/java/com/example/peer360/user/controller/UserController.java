@@ -86,7 +86,7 @@ public class UserController {
         generateWordCloud(wordFrequencies, filename);
 
         String bucketName = "unia-github-actions-s3-bucket";
-        String s3Filename = "wordclouds/" + email + "/" + filename;
+        String s3Filename = "wordclouds2/" + email + "/" + filename;
 
         PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                 .bucket(bucketName)

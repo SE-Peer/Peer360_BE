@@ -26,4 +26,11 @@ public class ScoreItem {
     @ManyToOne
     @JoinColumn(name = "review_id", referencedColumnName = "id", nullable = false)
     private Review review;
+
+    public void setItemName(String itemName) {
+        if (!ReviewItem.isValid(itemName)) {
+            throw new IllegalArgumentException("Invalid review item: " + itemName);
+        }
+        this.itemName = itemName;
+    }
 }

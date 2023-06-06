@@ -9,5 +9,8 @@ import java.util.List;
 public interface ReviewRepository extends JpaRepository<Review, Long> {
     List<Review> findByReviewee(User user);
 
+    // Change return type to List<Review>
     List<Review> findByRevieweeEmail(String Email);
 }
+
+

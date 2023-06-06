@@ -4,6 +4,7 @@ import com.example.peer360.project.entity.Project;
 import com.example.peer360.project.repository.ProjectRepository;
 import com.example.peer360.review.dto.ReviewDto;
 import com.example.peer360.review.entity.KeywordItem;
+import com.example.peer360.review.entity.ReviewItem;
 import com.example.peer360.review.entity.ScoreItem;
 import com.example.peer360.review.entity.Review;
 import com.example.peer360.review.repository.ReviewRepository;
@@ -41,12 +42,14 @@ public class ReviewService {
         }
         List<ScoreItem> scoreItems = new ArrayList<>();
         for (Map.Entry<String, Integer> entry : reviewDto.getReviewItems().entrySet()) {
+            if(entry.getValue() < 1 || entry.getValue() > 5) {
+                throw new IllegalArgumentException("Score should be between 1 and 5. Received: " + entry.getValue());
+            }
             ScoreItem scoreItem = new ScoreItem();
             scoreItem.setItemName(entry.getKey());
             scoreItem.setScore(entry.getValue());
             scoreItems.add(scoreItem);
         }
-
         Review review = Review.builder()
                 .reviewer(reviewer)
                 .reviewee(reviewee)
@@ -75,16 +78,16 @@ public class ReviewService {
         User user = userService.findUserByEmail(email);
         List<Review> reviews = reviewRepository.findByRevieweeEmail(user.getEmail());
 
-        Map<String, List<Integer>> scoresByItemName = new HashMap<>();
+        Map<String, List<ScoreItem>> scoresByItemName = new HashMap<>();
         for (Review review : reviews) {
             for (ScoreItem scoreItem : review.getScoreItems()) {
-                scoresByItemName.computeIfAbsent(scoreItem.getItemName(), k -> new ArrayList<>()).add(scoreItem.getScore());
+                scoresByItemName.computeIfAbsent(scoreItem.getItemName(), k -> new ArrayList<>()).add(scoreItem);
             }
         }
 
         Map<String, Double> averageScoresByItemName = new HashMap<>();
-        for (Map.Entry<String, List<Integer>> entry : scoresByItemName.entrySet()) {
-            double average = entry.getValue().stream().mapToInt(Integer::intValue).average().orElse(0.0);
+        for (Map.Entry<String, List<ScoreItem>> entry : scoresByItemName.entrySet()) {
+            double average = entry.getValue().stream().mapToInt(ScoreItem::getScore).average().orElse(0.0);
             averageScoresByItemName.put(entry.getKey(), average);
         }
 
