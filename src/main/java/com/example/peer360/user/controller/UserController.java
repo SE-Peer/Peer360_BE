@@ -11,6 +11,7 @@ import com.kennycason.kumo.WordFrequency;
 import com.kennycason.kumo.bg.CircleBackground;
 import com.kennycason.kumo.font.scale.SqrtFontScalar;
 import com.kennycason.kumo.palette.LinearGradientColorPalette;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -97,6 +98,14 @@ public class UserController {
         String fileUrl = s3Client.utilities().getUrl(builder -> builder.bucket(bucketName).key(s3Filename)).toExternalForm();
 
         return new ResponseEntity<>(fileUrl, HttpStatus.OK);
+    }
+
+    @ApiOperation(
+            value = "전체 회원 조회 (실제 기능 X)")
+    @GetMapping("/list")
+    public ResponseEntity<List<UserDto>> getAllUsers() {
+        List<UserDto> users = userService.getAllUsers();
+        return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
     private void generateWordCloud(Map<String, Integer> wordFrequencies, String filename) {

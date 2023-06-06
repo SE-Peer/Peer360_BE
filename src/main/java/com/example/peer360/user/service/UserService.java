@@ -48,4 +48,10 @@ public class UserService {
         return userRepository.findByEmail(email);
     }
 
+    public List<UserDto> getAllUsers() {
+        return userRepository.findAll().stream()
+                .map(User::toDto)
+                .collect(Collectors.toList());
+    }
+
 }

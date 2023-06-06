@@ -14,10 +14,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -32,7 +30,8 @@ public class ReviewService {
     public ReviewDto createReview(ReviewDto reviewDto) {
         User reviewer = userRepository.findByEmail(reviewDto.getReviewerEmail());
         User reviewee = userRepository.findByEmail(reviewDto.getRevieweeEmail());
-        Project project = projectRepository.findByName(reviewDto.getProjectName()).orElseThrow();
+        Project project = projectRepository.findByName(reviewDto.getProjectName())
+                .orElseThrow(() -> new NoSuchElementException("Project with name " + reviewDto.getProjectName() + " not found"));
 
         List<KeywordItem> keywordItems = new ArrayList<>();
         for (String keyword : reviewDto.getKeywordItems()) {
@@ -90,5 +89,11 @@ public class ReviewService {
         }
 
         return averageScoresByItemName;
+    }
+
+    public List<ReviewDto> getAllReviews() {
+        return reviewRepository.findAll().stream()
+                .map(Review::toDto)
+                .collect(Collectors.toList());
     }
 }

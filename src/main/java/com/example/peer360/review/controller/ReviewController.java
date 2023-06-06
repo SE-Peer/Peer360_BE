@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/reviews")
@@ -31,5 +33,14 @@ public class ReviewController {
     public ResponseEntity<ReviewDto> getReview(@PathVariable Long reviewId) {
         ReviewDto review = reviewService.getReview(reviewId);
         return new ResponseEntity<>(review, HttpStatus.OK);
+    }
+
+    @ApiOperation(
+            value = "전체 리뷰 조회 (실제 기능 X)"
+            , notes = "reviewId 까먹었을 때 확인용")
+    @GetMapping("/list")
+    public ResponseEntity<List<ReviewDto>> getAllReviews() {
+        List<ReviewDto> reviews = reviewService.getAllReviews();
+        return new ResponseEntity<>(reviews, HttpStatus.OK);
     }
 }
