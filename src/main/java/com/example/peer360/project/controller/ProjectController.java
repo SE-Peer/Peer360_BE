@@ -39,4 +39,11 @@ public class ProjectController {
         return new ResponseEntity<>(projects, HttpStatus.OK);
     }
 
+    @ApiOperation(value = "특정 유저가 참여한 프로젝트 조회")
+    @GetMapping("/participated/{email}")
+    public ResponseEntity<List<ProjectDto>> getParticipatedProjects(@PathVariable String email) {
+        List<ProjectDto> participatedProjects = projectService.getParticipatedProjects(email);
+        return new ResponseEntity<>(participatedProjects, HttpStatus.OK);
+    }
+
 }
