@@ -4,7 +4,6 @@ import com.example.peer360.project.entity.Project;
 import com.example.peer360.project.repository.ProjectRepository;
 import com.example.peer360.review.dto.ReviewDto;
 import com.example.peer360.review.entity.KeywordItem;
-import com.example.peer360.review.entity.ReviewItem;
 import com.example.peer360.review.entity.ScoreItem;
 import com.example.peer360.review.entity.Review;
 import com.example.peer360.review.repository.ReviewRepository;
@@ -74,7 +73,7 @@ public class ReviewService {
     }
 
 
-    public Map<String, Double> getAverageScoresByItemName(String email) {
+    public Map<String, Integer> getAverageScoresByItemName(String email) {
         User user = userService.findUserByEmail(email);
         List<Review> reviews = reviewRepository.findByRevieweeEmail(user.getEmail());
 
@@ -85,10 +84,11 @@ public class ReviewService {
             }
         }
 
-        Map<String, Double> averageScoresByItemName = new HashMap<>();
+        Map<String, Integer> averageScoresByItemName = new HashMap<>();
         for (Map.Entry<String, List<ScoreItem>> entry : scoresByItemName.entrySet()) {
             double average = entry.getValue().stream().mapToInt(ScoreItem::getScore).average().orElse(0.0);
-            averageScoresByItemName.put(entry.getKey(), average);
+            average = Math.floor(average);
+            averageScoresByItemName.put(entry.getKey(), (int)average);
         }
 
         return averageScoresByItemName;

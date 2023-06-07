@@ -2,7 +2,6 @@ package com.example.peer360.participation.controller;
 
 import com.example.peer360.participation.dto.ParticipationDto;
 import com.example.peer360.participation.service.ParticipationService;
-import com.example.peer360.project.dto.ProjectDto;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

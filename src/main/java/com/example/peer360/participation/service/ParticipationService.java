@@ -4,7 +4,6 @@ import com.example.peer360.handler.UserAlreadyParticipatingException;
 import com.example.peer360.participation.dto.ParticipationDto;
 import com.example.peer360.participation.entity.Participation;
 import com.example.peer360.participation.repository.ParticipationRepository;
-import com.example.peer360.project.dto.ProjectDto;
 import com.example.peer360.project.entity.Project;
 import com.example.peer360.project.repository.ProjectRepository;
 import com.example.peer360.user.entity.User;

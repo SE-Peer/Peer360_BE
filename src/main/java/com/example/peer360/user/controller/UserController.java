@@ -18,14 +18,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import javax.servlet.http.HttpSession;
 import java.awt.*;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Controller
@@ -50,6 +47,12 @@ public class UserController {
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
+    @GetMapping("/{email}/reviews")
+    public ResponseEntity<List<ReviewDto>> getUserReviews(@PathVariable String email) {
+        List<ReviewDto> reviews = userService.getUserReviews(email);
+        return ResponseEntity.ok(reviews);
+    }
+
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginRequestDto loginRequestDto, HttpSession session) {
         UserDto user = userService.validateUser(loginRequestDto.getEmail(), loginRequestDto.getPassword());
@@ -68,8 +71,8 @@ public class UserController {
     }
 
     @GetMapping("/{email}/average-scores")
-    public ResponseEntity<Map<String, Double>> getAverageScoresByItemName(@PathVariable String email) {
-        Map<String, Double> averageScores = reviewService.getAverageScoresByItemName(email);
+    public ResponseEntity<Map<String, Integer>> getAverageScoresByItemName(@PathVariable String email) {
+        Map<String, Integer> averageScores = reviewService.getAverageScoresByItemName(email);
         return new ResponseEntity<>(averageScores, HttpStatus.OK);
     }
 

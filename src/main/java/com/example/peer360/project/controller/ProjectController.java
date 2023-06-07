@@ -1,7 +1,9 @@
 package com.example.peer360.project.controller;
 
 import com.example.peer360.project.dto.ProjectDto;
+import com.example.peer360.project.entity.Project;
 import com.example.peer360.project.service.ProjectService;
+import com.example.peer360.review.entity.ReviewStatus;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -44,6 +46,24 @@ public class ProjectController {
     public ResponseEntity<List<ProjectDto>> getParticipatedProjects(@PathVariable String email) {
         List<ProjectDto> participatedProjects = projectService.getParticipatedProjects(email);
         return new ResponseEntity<>(participatedProjects, HttpStatus.OK);
+    }
+
+    // REVIEW_POSSIBLE로 상태를 변경하는 엔드포인트
+    @PatchMapping("/{projectName}/status/review-possible")
+    public ResponseEntity<ProjectDto> changeStatusToReviewPossible(@PathVariable String projectName) {
+        Project project = projectService.getProjectByName(projectName);
+        project.setStatus(ReviewStatus.REVIEW_POSSIBLE);
+        Project updatedProject = projectService.saveProject(project);
+        return new ResponseEntity<>(updatedProject.toDto(), HttpStatus.OK);
+    }
+
+    // REVIEW_COMPLETED로 상태를 변경하는 엔드포인트
+    @PatchMapping("/{projectName}/status/review-completed")
+    public ResponseEntity<ProjectDto> changeStatusToReviewCompleted(@PathVariable String projectName) {
+        Project project = projectService.getProjectByName(projectName);
+        project.setStatus(ReviewStatus.REVIEW_COMPLETED);
+        Project updatedProject = projectService.saveProject(project);
+        return new ResponseEntity<>(updatedProject.toDto(), HttpStatus.OK);
     }
 
 }

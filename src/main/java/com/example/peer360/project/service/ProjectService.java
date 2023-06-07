@@ -10,7 +10,6 @@ import com.example.peer360.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -47,4 +46,14 @@ public class ProjectService {
                 .map(Project::toDto)
                 .collect(Collectors.toList());
     }
+
+    public Project getProjectByName(String projectName) {
+        return projectRepository.findByName(projectName)
+                .orElseThrow(() -> new IllegalArgumentException("No project found with name: " + projectName));
+    }
+
+    public Project saveProject(Project project) {
+        return projectRepository.save(project);
+    }
+
 }

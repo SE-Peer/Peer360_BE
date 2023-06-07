@@ -32,8 +32,10 @@ public class UserService {
 
     public List<ReviewDto> getUserReviews(String email) {
         User user = userRepository.findByEmail(email);
-        List<Review> reviews = reviewRepository.findByReviewee(user);
-        return reviews.stream().map(Review::toDto).collect(Collectors.toList());
+
+        return reviewRepository.findByReviewee(user).stream()
+                .map(ReviewDto::new)
+                .collect(Collectors.toList());
     }
 
     public UserDto validateUser(String email, String password) {
