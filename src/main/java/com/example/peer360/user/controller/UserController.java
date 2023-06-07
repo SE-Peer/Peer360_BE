@@ -83,8 +83,6 @@ public class UserController {
                 .collect(Collectors.groupingBy(Function.identity(), Collectors.summingInt(e -> 1)));
 
         String filename = "wordcloud.png";
-        generateWordCloud(wordFrequencies, filename);
-
         String bucketName = "unia-github-actions-s3-bucket";
         String s3Filename = "wordclouds/" + email + "/" + filename;
 
@@ -96,7 +94,7 @@ public class UserController {
         s3Client.putObject(putObjectRequest, Paths.get(filename));
 
         String fileUrl = s3Client.utilities().getUrl(builder -> builder.bucket(bucketName).key(s3Filename)).toExternalForm();
-
+        System.out.println(fileUrl);
         return new ResponseEntity<>(fileUrl, HttpStatus.OK);
     }
 
