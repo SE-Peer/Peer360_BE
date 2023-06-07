@@ -76,22 +76,10 @@ public class UserController {
 
     @GetMapping("/{email}/reviews/wordcloud")
     public ResponseEntity<String> getUserReviewsWordCloud(@PathVariable String email) {
-        List<ReviewDto> reviews = userService.getUserReviews(email);
-
-        Map<String, Integer> wordFrequencies = reviews.stream()
-                .flatMap(review -> review.getKeywordItems().stream())
-                .collect(Collectors.groupingBy(Function.identity(), Collectors.summingInt(e -> 1)));
 
         String filename = "wordcloud.png";
         String bucketName = "unia-github-actions-s3-bucket";
         String s3Filename = "wordclouds/" + email + "/" + filename;
-
-        PutObjectRequest putObjectRequest = PutObjectRequest.builder()
-                .bucket(bucketName)
-                .key(s3Filename)
-                .build();
-
-        s3Client.putObject(putObjectRequest, Paths.get(filename));
 
         String fileUrl = s3Client.utilities().getUrl(builder -> builder.bucket(bucketName).key(s3Filename)).toExternalForm();
         System.out.println(fileUrl);

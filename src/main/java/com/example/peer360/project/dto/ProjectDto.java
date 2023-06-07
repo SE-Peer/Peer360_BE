@@ -6,6 +6,7 @@ import com.example.peer360.user.dto.UserDto;
 import com.example.peer360.user.entity.User;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -19,7 +20,7 @@ public class ProjectDto {
     private String url;
     private String status;
     private String creatorEmail;
-    private List<UserDto> participants;
+    private List<UserDto> participants = new ArrayList<>();
 
     public Project toEntity(User creator){
         return Project.builder()

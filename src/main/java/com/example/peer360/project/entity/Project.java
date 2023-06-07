@@ -4,10 +4,12 @@ import com.example.peer360.project.dto.ProjectDto;
 import com.example.peer360.review.entity.Review;
 import com.example.peer360.review.entity.ReviewStatus;
 import com.example.peer360.participation.entity.Participation;
+import com.example.peer360.user.dto.UserDto;
 import com.example.peer360.user.entity.User;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,7 +30,7 @@ public class Project {
     private String url;
 
     @Enumerated(EnumType.STRING)
-    private ReviewStatus status; //ReviewStatus is an enum with values REVIEW_POSSIBLE, REVIEW_COMPLETED
+    private ReviewStatus status;
 
     @ManyToOne
     @JoinColumn(name = "creator_email", referencedColumnName = "email", nullable = false)
@@ -41,15 +43,24 @@ public class Project {
     private List<Participation> participations;
 
     public ProjectDto toDto() {
-        return ProjectDto.builder()
-                .name(name)
-                .url(url)
-                .status(status.toString())
-                .creatorEmail(creator.getEmail())
-                .participants(participations.stream()
-                        .map(participation -> participation.getUser().toDto())
-                        .collect(Collectors.toList()))
+        ProjectDto projectDto = ProjectDto.builder()
+                .name(this.name)
+                .url(this.url)
+                .status(this.status.name())
+                .creatorEmail(this.creator.getEmail())
                 .build();
+
+        if(this.participations != null) {
+            List<UserDto> participants = this.participations.stream()
+                    .map(Participation::getUser)
+                    .map(User::toDto)
+                    .collect(Collectors.toList());
+            projectDto.setParticipants(participants);
+        } else {
+            projectDto.setParticipants(new ArrayList<>());
+        }
+
+        return projectDto;
     }
 
 }
