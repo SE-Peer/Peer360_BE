@@ -66,4 +66,11 @@ public class ProjectController {
         return new ResponseEntity<>(updatedProject.toDto(), HttpStatus.OK);
     }
 
+    @ApiOperation(value = "프로젝트 삭제", notes = "프로젝트 이름에 해당하는 프로젝트를 삭제합니다.")
+    @DeleteMapping("/{projectName}")
+    public ResponseEntity<Void> deleteProject(@PathVariable String projectName) {
+        projectService.deleteProject(projectName);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
 }

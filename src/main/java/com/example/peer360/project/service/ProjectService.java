@@ -56,4 +56,9 @@ public class ProjectService {
         return projectRepository.save(project);
     }
 
+    public void deleteProject(String projectName) {
+        Project project = getProjectByName(projectName);
+        projectRepository.delete(project);
+    }
+
 }
