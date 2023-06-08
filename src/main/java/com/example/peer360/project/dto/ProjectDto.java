@@ -20,6 +20,7 @@ public class ProjectDto {
     private String url;
     private String status;
     private String creatorEmail;
+    @Builder.Default
     private List<UserDto> participants = new ArrayList<>();
 
     public Project toEntity(User creator){

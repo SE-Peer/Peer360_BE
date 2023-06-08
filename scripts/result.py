@@ -14,7 +14,7 @@ def generate_word_cloud(email):
     counts = Counter(noun_adj_list)
     tags = counts.most_common(40)
 
-    wordcloud = WordCloud(font_path='/Library/Fonts/Arial Unicode.ttf',
+    wordcloud = WordCloud(font_path='/usr/share/fonts/NanumMyeongjoBold.ttf',
                           background_color='white',
                           width=800,
                           height=800).generate_from_frequencies(dict(tags))
