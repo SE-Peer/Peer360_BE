@@ -9,7 +9,9 @@ import com.kennycason.kumo.CollisionMode;
 import com.kennycason.kumo.WordCloud;
 import com.kennycason.kumo.WordFrequency;
 import com.kennycason.kumo.bg.CircleBackground;
+import com.kennycason.kumo.font.KumoFont;
 import com.kennycason.kumo.font.scale.SqrtFontScalar;
+import com.kennycason.kumo.palette.ColorPalette;
 import com.kennycason.kumo.palette.LinearGradientColorPalette;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -18,11 +20,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
+import java.nio.file.Paths;
 import javax.servlet.http.HttpSession;
 import java.awt.*;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Controller
@@ -79,10 +84,25 @@ public class UserController {
 
     @GetMapping("/{email}/reviews/wordcloud")
     public ResponseEntity<String> getUserReviewsWordCloud(@PathVariable String email) {
+        List<ReviewDto> reviews = userService.getUserReviews(email);
+
+        Map<String, Integer> wordFrequencies = reviews.stream()
+                .flatMap(review -> review.getKeywordItems().stream())
+                .collect(Collectors.groupingBy(Function.identity(), Collectors.summingInt(e -> 1)));
 
         String filename = "wordcloud.png";
+
+        userService.generateWordCloud(wordFrequencies, filename);
+
         String bucketName = "unia-github-actions-s3-bucket";
         String s3Filename = "wordclouds/" + email + "/" + filename;
+
+        PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+                .bucket(bucketName)
+                .key(s3Filename)
+                .build();
+
+        s3Client.putObject(putObjectRequest, Paths.get(filename));
 
         String fileUrl = s3Client.utilities().getUrl(builder -> builder.bucket(bucketName).key(s3Filename)).toExternalForm();
         System.out.println(fileUrl);
@@ -97,19 +117,6 @@ public class UserController {
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
-    private void generateWordCloud(Map<String, Integer> wordFrequencies, String filename) {
-        Dimension dimension = new Dimension(600, 600);
-        WordCloud wordCloud = new WordCloud(dimension, CollisionMode.PIXEL_PERFECT);
-        wordCloud.setPadding(2);
-        wordCloud.setBackground(new CircleBackground(300));
-        wordCloud.setColorPalette(new LinearGradientColorPalette(Color.WHITE, Color.BLUE, Color.GREEN, 30, 30));
-        wordCloud.setFontScalar(new SqrtFontScalar(10, 40));
 
-        List<WordFrequency> wordFrequencyList = wordFrequencies.entrySet().stream()
-                .map(entry -> new WordFrequency(entry.getKey(), entry.getValue()))
-                .collect(Collectors.toList());
 
-        wordCloud.build(wordFrequencyList);
-        wordCloud.writeToFile(filename);
-    }
 }
