@@ -5,12 +5,6 @@ import com.example.peer360.review.service.ReviewService;
 import com.example.peer360.user.dto.LoginRequestDto;
 import com.example.peer360.user.dto.UserDto;
 import com.example.peer360.user.service.UserService;
-import com.kennycason.kumo.CollisionMode;
-import com.kennycason.kumo.WordCloud;
-import com.kennycason.kumo.WordFrequency;
-import com.kennycason.kumo.bg.CircleBackground;
-import com.kennycason.kumo.font.scale.SqrtFontScalar;
-import com.kennycason.kumo.palette.LinearGradientColorPalette;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,10 +14,11 @@ import org.springframework.web.bind.annotation.*;
 import software.amazon.awssdk.services.s3.S3Client;
 
 import javax.servlet.http.HttpSession;
-import java.awt.*;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
@@ -77,15 +72,29 @@ public class UserController {
     }
 
 
-    @GetMapping("/{email}/reviews/wordcloud")
+    @GetMapping("/{email}/wordcloud")
     public ResponseEntity<String> getUserReviewsWordCloud(@PathVariable String email) {
+        List<ReviewDto> reviews = userService.getUserReviews(email);
 
-        String filename = "wordcloud.png";
+        String reviewsFilename = email + ".txt";
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(reviewsFilename))) {
+            for (ReviewDto review : reviews) {
+                String keywords = String.join(" ", review.getKeywordItems());
+                writer.write(keywords);
+                writer.newLine();
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Error writing reviews to file", e);
+        }
+
+        userService.generateWordCloud(email);
+
         String bucketName = "unia-github-actions-s3-bucket";
+        String filename = "wordcloud.png";
         String s3Filename = "wordclouds/" + email + "/" + filename;
 
         String fileUrl = s3Client.utilities().getUrl(builder -> builder.bucket(bucketName).key(s3Filename)).toExternalForm();
-        System.out.println(fileUrl);
+
         return new ResponseEntity<>(fileUrl, HttpStatus.OK);
     }
 
@@ -97,19 +106,4 @@ public class UserController {
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
-    private void generateWordCloud(Map<String, Integer> wordFrequencies, String filename) {
-        Dimension dimension = new Dimension(600, 600);
-        WordCloud wordCloud = new WordCloud(dimension, CollisionMode.PIXEL_PERFECT);
-        wordCloud.setPadding(2);
-        wordCloud.setBackground(new CircleBackground(300));
-        wordCloud.setColorPalette(new LinearGradientColorPalette(Color.WHITE, Color.BLUE, Color.GREEN, 30, 30));
-        wordCloud.setFontScalar(new SqrtFontScalar(10, 40));
-
-        List<WordFrequency> wordFrequencyList = wordFrequencies.entrySet().stream()
-                .map(entry -> new WordFrequency(entry.getKey(), entry.getValue()))
-                .collect(Collectors.toList());
-
-        wordCloud.build(wordFrequencyList);
-        wordCloud.writeToFile(filename);
-    }
 }
