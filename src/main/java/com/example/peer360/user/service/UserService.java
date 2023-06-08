@@ -65,32 +65,38 @@ public class UserService {
     }
 
     public void generateWordCloud(String email) {
-        String scriptPath = "scripts/result.py";
+        String currentDir = System.getProperty("user.dir");
+        String scriptPath = currentDir + "/scripts/result.py";
         String filename = "wordcloud.png";
         String s3Filename = "wordclouds/" + email + "/" + filename;
 
         List<String> cmdList = new ArrayList<>();
-        cmdList.add("/Library/Frameworks/Python.framework/Versions/3.10/bin/python3");
+        cmdList.add("/usr/bin/python3");
         cmdList.add(scriptPath);
         cmdList.add(email);
 
         ProcessBuilder pb = new ProcessBuilder(cmdList);
-
         try {
             Process p = pb.start();
             int exitCode = p.waitFor();
 
+            // Read output
+            BufferedReader outputReader = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            String outputLine;
+            while ((outputLine = outputReader.readLine()) != null) {
+                System.out.println("Output: " + outputLine);
+            }
+
+            // Read error
+            BufferedReader errorReader = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+            String errorLine;
+            while ((errorLine = errorReader.readLine()) != null) {
+                System.err.println("Error: " + errorLine);
+            }
+
             // Python error handling
             if (exitCode != 0) {
-                InputStream errorStream = p.getErrorStream();
-                InputStreamReader isr = new InputStreamReader(errorStream);
-                BufferedReader br = new BufferedReader(isr);
-                String line;
-                StringBuilder entireStackTrace = new StringBuilder();
-                while ((line = br.readLine()) != null) {
-                    entireStackTrace.append(line).append("\n");
-                }
-                throw new RuntimeException("Python script execution failed with exit code: " + exitCode + "\n" + entireStackTrace.toString());
+                throw new RuntimeException("Python script execution failed with exit code: " + exitCode);
             }
         } catch (Exception e) {
             throw new RuntimeException("Error running python script", e);
