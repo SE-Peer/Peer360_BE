@@ -36,10 +36,10 @@ public class Project {
     @JoinColumn(name = "creator_email", referencedColumnName = "email", nullable = false)
     private User creator;
 
-    @OneToMany(mappedBy = "project")
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
     private List<Review> reviews;
 
-    @OneToMany(mappedBy = "project")
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
     private List<Participation> participations;
 
     public ProjectDto toDto() {

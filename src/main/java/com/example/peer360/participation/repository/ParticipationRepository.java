@@ -11,6 +11,8 @@ public interface ParticipationRepository extends JpaRepository<Participation, Lo
     List<Participation> findAllByUserAndProject(User user, Project project);
 
     List<Participation> findByUser(User user);
+
+    List<Participation> findAllByUser(User user);
 }
 
 

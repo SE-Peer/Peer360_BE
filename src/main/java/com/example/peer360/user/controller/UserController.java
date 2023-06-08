@@ -5,14 +5,6 @@ import com.example.peer360.review.service.ReviewService;
 import com.example.peer360.user.dto.LoginRequestDto;
 import com.example.peer360.user.dto.UserDto;
 import com.example.peer360.user.service.UserService;
-import com.kennycason.kumo.CollisionMode;
-import com.kennycason.kumo.WordCloud;
-import com.kennycason.kumo.WordFrequency;
-import com.kennycason.kumo.bg.CircleBackground;
-import com.kennycason.kumo.font.KumoFont;
-import com.kennycason.kumo.font.scale.SqrtFontScalar;
-import com.kennycason.kumo.palette.ColorPalette;
-import com.kennycason.kumo.palette.LinearGradientColorPalette;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -117,6 +109,10 @@ public class UserController {
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
-
+    @DeleteMapping("/{email}")
+    public ResponseEntity<Void> deleteUser(@PathVariable String email) {
+        userService.deleteUser(email);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 
 }

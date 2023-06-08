@@ -51,4 +51,9 @@ public class ParticipationService {
                 .map(Participation::toDto)
                 .collect(Collectors.toList());
     }
+
+    public void deleteAllByUser(User user) {
+        List<Participation> participations = participationRepository.findAllByUser(user);
+        participationRepository.deleteAll(participations);
+    }
 }

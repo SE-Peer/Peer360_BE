@@ -1,8 +1,10 @@
 package com.example.peer360.user.service;
 
+import com.example.peer360.participation.service.ParticipationService;
 import com.example.peer360.review.dto.ReviewDto;
 import com.example.peer360.review.entity.Review;
 import com.example.peer360.review.repository.ReviewRepository;
+import com.example.peer360.review.service.ReviewService;
 import com.example.peer360.user.controller.RandomAngleGenerator;
 import com.example.peer360.user.dto.UserDto;
 import com.example.peer360.user.entity.User;
@@ -30,6 +32,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final ReviewRepository reviewRepository;
+    private final ParticipationService participationService;
     public UserDto createUser(UserDto userDto) {
         User user = userDto.toEntity();
         User savedUser = userRepository.save(user);
@@ -92,4 +95,11 @@ public class UserService {
         wordCloud.writeToFile(filename);
     }
 
+    public void deleteUser(String email) {
+        User user = userRepository.findByEmail(email);
+
+        participationService.deleteAllByUser(user);
+
+        userRepository.delete(user);
+    }
 }

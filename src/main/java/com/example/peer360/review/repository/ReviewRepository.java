@@ -11,6 +11,8 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     // Change return type to List<Review>
     List<Review> findByRevieweeEmail(String Email);
+
+    List<Review> findAllByReviewer(User reviewer);
 }
 
 
